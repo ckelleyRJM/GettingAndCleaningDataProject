@@ -24,3 +24,5 @@ This file is intended to explain how the scripts in this repo work together.
 
 * CodeBook.md describes the variables and the data. The transformations performed to clean the data are in the `run_analysis.R` script.
 * run_analysis.R is the final script required for the project.
+* Data provided by Coursera for this project can be downloaded here: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+  * It was already on my desktop when writing `run_analysis.R`.

@@ -40,15 +40,31 @@ activityLabels <- read.table("UCI HAR Dataset/activity_labels.txt")
 activityLabels[,2] <- as.character(activityLabels[,2])
 
 
+# Reduce features to only those with standard deviation or mean in the name
+# Reformat names to be cleaner
+featuresLimited <- grep(".*std.*|.*mean.*", features[,2])
+featuresLimited.names <- features[featuresLimited.names,2]
+featuresLimited.names = gsub('-std', 'Std', featuresLimited.names)
+featuresLimited.names = gsub('-mean', 'Mean', featuresLimited.names)
+featuresLimited.names <- gsub('[-()]', '', featuresLimited.names)
+
+
 # Read in training data
-x_train <- read.table("./train/X_train.txt")
-y_train <- read.table("./train/y_train.txt")
-subject_train <- read.table("./train/subject_train.txt")
+x_train <- read.table("UCI HAR Dataset/train/X_train.txt")
+y_train <- read.table("UCI HAR Dataset/train/y_train.txt")
+subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt")
 
 ## Read in test data
 x_test <- read.table("./test/X_test.txt")
 y_test <- read.table("./test/y_test.txt")
 subject_test <- read.table("./test/subject_test.txt")
+
+
+
+
+##### below is not updated yet! 
+##### still working..
+
 
 
 ## Concatenate the subject data

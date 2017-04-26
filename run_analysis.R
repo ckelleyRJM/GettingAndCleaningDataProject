@@ -10,8 +10,35 @@
 
 ## Begin script
 
-# Load data.table
+# Load libraries
 library(data.table)
+library(reshape2)
+library(dplyr)
+
+# Establish URL shorthand and fileName shorthand
+URL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+fileName <- "getdata_dataset.zip"
+
+# Download, then unzip file
+if (!file.exists(fileName)){
+  download.file(URL, fileName, method="curl")
+}  
+if (!file.exists("UCI HAR Dataset")) { 
+  unzip(fileName) 
+}
+
+
+# Read in the features.txt file, which lists the variable features
+# Then ensure character data type for columns
+features <- read.table("UCI HAR Dataset/features.txt")
+features[,2] <- as.character(features[,2])
+
+
+# Read in activity file
+# Then ensure character data type for columns
+activityLabels <- read.table("UCI HAR Dataset/activity_labels.txt")
+activityLabels[,2] <- as.character(activityLabels[,2])
+
 
 # Read in training data
 x_train <- read.table("./train/X_train.txt")
@@ -23,12 +50,6 @@ x_test <- read.table("./test/X_test.txt")
 y_test <- read.table("./test/y_test.txt")
 subject_test <- read.table("./test/subject_test.txt")
 
-## Read in the features.txt file, which lists the variable features
-## And assign column names
-## Then View the table to confirm it worked :)
-features <- read.table("features.txt")
-setnames(features, names(features), c("number","name"))
-View(features)
 
 ## Concatenate the subject data
 subject <- rbind(subject_test, subject_train)
@@ -37,7 +58,7 @@ subject <- rbind(subject_test, subject_train)
 activity <- rbind(x_test, y_train)
 
 ## Concatenate the training data
-train <- rbind(x_test ,y_train)
+train <- rbind(x_test, y_train)
 
 ## Combine training and test data
 complete_data <- rbind(test, train)
@@ -51,5 +72,6 @@ features_mean_std <- grepl("mean\\(\\)|std\\(\\)", features$name)
 # Subset the complete_data table to only include objservations matching the features_mean_std row number
 # Assign column names from features_mean_stf table to complete_data table
 # Output tidy data
+
 
 

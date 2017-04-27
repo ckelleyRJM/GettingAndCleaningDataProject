@@ -43,7 +43,7 @@ activityLabels[,2] <- as.character(activityLabels[,2])
 # Reduce features to only those with standard deviation or mean in the name
 # Reformat names to be cleaner
 featuresLimited <- grep(".*std.*|.*mean.*", features[,2])
-featuresLimited.names <- features[featuresLimited.names,2]
+featuresLimited.names <- features[featuresLimited,2]
 featuresLimited.names = gsub('-std', 'Std', featuresLimited.names)
 featuresLimited.names = gsub('-mean', 'Mean', featuresLimited.names)
 featuresLimited.names <- gsub('[-()]', '', featuresLimited.names)
@@ -54,40 +54,31 @@ x_train <- read.table("UCI HAR Dataset/train/X_train.txt")
 y_train <- read.table("UCI HAR Dataset/train/y_train.txt")
 subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt")
 
-## Read in test data
-x_test <- read.table("./test/X_test.txt")
-y_test <- read.table("./test/y_test.txt")
-subject_test <- read.table("./test/subject_test.txt")
+
+# Read in test data
+x_test <- read.table("UCI HAR Dataset/test/X_test.txt")
+y_test <- read.table("UCI HAR Dataset/test/y_test.txt")
+subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt")
 
 
+# Concatenate the training data
+train <- cbind(subject_train, x_train, y_train)
 
 
-##### below is not updated yet! 
-##### still working..
+# Concatenate the test data
+test <- cbind(subject_test, x_test, y_test)
 
 
-
-## Concatenate the subject data
-subject <- rbind(subject_test, subject_train)
-
-## Concatenate the activity data
-activity <- rbind(x_test, y_train)
-
-## Concatenate the training data
-train <- rbind(x_test, y_train)
-
-## Combine training and test data
-complete_data <- rbind(test, train)
-
-## In features table, use regex to simplify to only columns with 'std' or 'mean' in the name
-features_mean_std <- grepl("mean\\(\\)|std\\(\\)", features$name)
-
-## Incomplete project
-## Next steps are:
-# Use features_mean_std to simplify the features table to only columns with mean or std in the name
-# Subset the complete_data table to only include objservations matching the features_mean_std row number
-# Assign column names from features_mean_stf table to complete_data table
-# Output tidy data
+# Combine training and test data; add labels
+complete_data <- rbind(train, test)
+colnames(complete_data) <- c("subject", "activity", featuresLimited.names)
 
 
+# Convert to factors, which is proper for this data set
+complete_data$activity <- factor(complete_data$activity, levels = activityLabels[,1], labels = activityLabels[,2])
+complete_data$subject <- as.factor(complete_data$subject)
 
+complete_data.melted <- melt(complete_data, id = c("subject", "activity"))
+complete_data.mean <- dcast(complete_data.melted, subject + activity ~ variable, mean)
+
+write.table(complete_data.mean, "tidy.txt", row.names = FALSE, quote = FALSE)
